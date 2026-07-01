@@ -1,0 +1,11 @@
+_base_: ../livemathematicianbench/default.yaml
+
+# Identical to configs/livemathematicianbench/default.yaml EXCEPT the env
+# name is rebound to the local harness module under harness_example.livemath,
+# so harness-opt edits stay physically isolated from the production
+# skillopt.envs.livemathematicianbench code path. See scripts/eval_only.py
+# + scripts/train.py for the matching adapter registration entry.
+
+env:
+  name: livemath-local
+  skill_init: harness_example/livemath/skills/initial.md

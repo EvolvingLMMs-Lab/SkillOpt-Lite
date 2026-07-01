@@ -1,0 +1,11 @@
+_base_: ../docvqa/default.yaml
+
+# Identical to configs/docvqa/default.yaml EXCEPT the env name is rebound
+# to the local harness module under harness_example.docvqa, so harness-opt
+# edits stay physically isolated from the production skillopt.envs.docvqa
+# code path. See scripts/eval_only.py + scripts/train.py for the matching
+# adapter registration entry.
+
+env:
+  name: docvqa-local
+  skill_init: harness_example/docvqa/skills/initial.md

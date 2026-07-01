@@ -1,0 +1,7 @@
+{
+  "skill": "copilot_example/searchqa/workspace/skill.md",
+  "split": "test",
+  "n_items": 1400,
+  "hard": 0.66,
+  "soft": 0.7718366831581116
+}

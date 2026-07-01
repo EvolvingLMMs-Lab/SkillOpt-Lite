@@ -1,0 +1,11 @@
+_base_: ../searchqa/default.yaml
+
+# Identical to configs/searchqa/default.yaml EXCEPT the env name is rebound
+# to the local harness module under harness_example.searchqa, so harness-opt
+# edits stay physically isolated from the production skillopt.envs.searchqa
+# code path. See scripts/eval_only.py + scripts/train.py for the matching
+# adapter registration entry.
+
+env:
+  name: searchqa-local
+  skill_init: harness_example/searchqa/skills/initial.md

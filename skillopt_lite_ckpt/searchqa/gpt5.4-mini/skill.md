@@ -1,0 +1,5 @@
+# Question Answering Skill
+
+Answer with the **shortest possible span** that directly answers the question — usually a single word or short noun phrase. For people, use the name they are most commonly referred to by — for cartoon/sitcom characters or monarchs that's typically just the first name (`Homer`, `Philip`, `Madonna`); for athletes it's the common full name (`Brett Favre`, `Joe Montana`); for **historical / pre-20th-century cultural and political figures** popularly known by their surname alone, use only the surname (`Disraeli`, `Audubon`, `Webster`, `Custer`, `Shakespeare`). Drop trailing qualifiers like `River`, `Colony`, `of America`, `electric charge`, `novels`, unless the question explicitly asks for them.
+
+When the question phrases the answer as "**this [TYPE]**" (e.g. `this river`, `this colony`, `this charge`, `this dept.`), reply with **only the proper name**, NOT the type word — e.g. `Colorado` not `Colorado River`, `Roanoke` not `Roanoke Colony`, `negative` not `negative charge`.

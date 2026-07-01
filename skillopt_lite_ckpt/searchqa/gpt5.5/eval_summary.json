@@ -1,0 +1,14 @@
+{
+  "skill": "copilot_example/searchqa/workspaces/gpt-5.5/skill.md",
+  "source_snapshot": "workspaces/gpt-5.5/.skillopt/history/round4__20260620_042118__best.md",
+  "round": 4,
+  "val_hard": 0.8250,
+  "val_soft": 0.8784,
+  "val_n": 200,
+  "split": "test",
+  "n_items": 1400,
+  "hard": 0.7900,
+  "soft": 0.8714,
+  "initial_test_hard": 0.7236,
+  "initial_test_soft": 0.8359
+}

@@ -1,0 +1,7 @@
+{
+  "skill": "copilot_example/searchqa/workspaces/gpt-5.4-mini/skill.md",
+  "split": "test",
+  "n_items": 1400,
+  "hard": 0.7314,
+  "soft": 0.8309
+}

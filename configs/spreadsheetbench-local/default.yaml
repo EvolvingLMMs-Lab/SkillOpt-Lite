@@ -1,0 +1,13 @@
+_base_: ../spreadsheetbench/default.yaml
+
+# Identical to configs/spreadsheetbench/default.yaml EXCEPT the env name is
+# rebound to the local harness module under harness_example.spreadsheetbench,
+# so harness-opt edits (rollout.py / react_agent.py / codegen_agent.py /
+# executor.py / recalc_harness.py / adapter.py) stay physically isolated
+# from the production skillopt.envs.spreadsheetbench code path.
+# See scripts/eval_only.py + scripts/train.py for the matching adapter
+# registration entry.
+
+env:
+  name: spreadsheetbench-local
+  skill_init: harness_example/spreadsheetbench/skills/initial.md

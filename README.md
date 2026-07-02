@@ -24,15 +24,25 @@ Do the one-time setup (`pip install -r requirements.txt`, fill in `.env`,
 below). Then open the env folder **inside your coding agent** (VS Code
 Copilot Chat, Codex CLI, Claude Code, kimi-code, glm-code, deepseek-tui —
 anything that reads `.github/prompts/*.prompt.md`) and type one line at the
-chat prompt:
+chat prompt.
+
+**Skill-only optimization** (evolve `skill.md`):
 
 ```
 cd copilot_example/livemath        # or spreadsheetbench / alfworld / ...
-/skillopt-loop rounds=10 batch=40
+/skillopt-loop rounds=2 batch=40 target=gpt-5.4-nano
+```
+
+**Skill + harness optimization** (also edit the agent code):
+
+```
+cd harness_example/spreadsheetbench
+/harnessopt-loop rounds=2 batch=40 target=gpt-5.4-nano skill=skills/initial.md
 ```
 
 That's it. The coding agent itself drives the loop — rollouts, sample
-inspection, `skill.md` patches, val-gated keep-or-revert, archive to
+inspection, `skill.md` (and, for `/harnessopt-loop`, allow-listed `.py`)
+patches, val-gated keep-or-revert, archive to
 `workspace/.skillopt/history/` — you don't touch anything else. When it
 stops improving, `workspace/skill.md` is the artifact you ship.
 

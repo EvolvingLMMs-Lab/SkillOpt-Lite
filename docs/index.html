@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkillOpt-Lite &amp; HarnessOpt — Agent self-evolution in one line of vibe</title>
-  <meta name="description" content="Two VS Code Copilot chat slash-commands that iteratively improve any language-agent from its own scored rollouts, with automatic validation-gated rollback.">
+  <title>SkillOpt-Lite and HarnessOpt — Agent self-evolution in one line of vibe</title>
+  <meta name="description" content="Two coding-agent slash-commands that iteratively improve any language-agent from its own scored rollouts, with automatic validation-gated rollback.">
   <meta name="theme-color" content="#0b1120">
-  <meta property="og:title" content="SkillOpt-Lite & HarnessOpt">
+  <meta property="og:title" content="SkillOpt-Lite and HarnessOpt">
   <meta property="og:description" content="Better and faster agent self-evolution — one line of vibe.">
   <meta property="og:image" content="assets/pipeline.png">
   <meta property="og:type" content="website">
@@ -569,17 +569,17 @@
   <section class="hero" id="top">
     <div class="hero-inner">
       <div>
-        <span class="kicker">v0.1 · ICML 2026 · SkillOpt-Lite &amp; HarnessOpt</span>
+        <span class="kicker">v0.1 · one line of vibe · zero fine-tuning</span>
         <h1 class="hero-title">
-          Better and faster agent<br>
-          self-evolution with <span class="accent">one line of vibe.</span>
+          <span class="accent">SkillOpt-Lite</span> and<br>
+          <span class="accent">HarnessOpt</span>.
         </h1>
         <p class="hero-sub">
-          Two VS Code Copilot slash-commands that iteratively improve any language
+          Two coding-agent slash-commands that iteratively improve any language
           agent from its own scored rollouts, with automatic <code>git tag</code>
-          rollback whenever the val split says the change hurt. No fine-tuning,
-          no inference-time overhead — the output is just a <code>skill.md</code>
-          you ship.
+          rollback whenever the val split says the change hurt. Better and
+          faster agent self-evolution — no fine-tuning, no inference-time
+          overhead, the output is just a <code>skill.md</code> you ship.
         </p>
         <div class="hero-actions">
           <a class="btn primary" href="https://github.com/EvolvingLMMs-Lab/SkillOpt-Lite" target="_blank" rel="noopener">
@@ -615,15 +615,15 @@
 <br>
 <span class="comment">round 1/3 · train 20 items ·······················</span>
 <div>&nbsp;&nbsp;<span class="kw">rollout</span>     ok  <span class="ok">0.612</span>  → samples/*.md</div>
-<div>&nbsp;&nbsp;<span class="kw">patch</span>       ok  edits: +12 / -4 lines</div>
+<div>&nbsp;&nbsp;<span class="kw">exploration</span> ok  edits: +12 / -4 lines</div>
 <div>&nbsp;&nbsp;<span class="kw">val gate</span>    <span class="ok">0.601 → 0.674 ✓ keep</span></div>
 <br>
-<span class="comment">round 2/3 · train 20 items ·······················</span>
-<div>&nbsp;&nbsp;<span class="kw">patch</span>       ok  edits: +5 / -1 lines</div>
+<span class="comment">round 2/3 · train 20 items ·································</span>
+<div>&nbsp;&nbsp;<span class="kw">exploration</span> ok  edits: +5 / -1 lines</div>
 <div>&nbsp;&nbsp;<span class="kw">val gate</span>    <span class="warn">0.674 → 0.669 ✗ revert</span></div>
 <br>
-<span class="comment">round 3/3 · train 20 items ·······················</span>
-<div>&nbsp;&nbsp;<span class="kw">patch</span>       ok  edits: +9 / -2 lines</div>
+<span class="comment">round 3/3 · train 20 items ·································</span>
+<div>&nbsp;&nbsp;<span class="kw">exploration</span> ok  edits: +9 / -2 lines</div>
 <div>&nbsp;&nbsp;<span class="kw">val gate</span>    <span class="ok">0.674 → 0.712 ✓ keep</span></div>
 <br>
 <span class="comment"># best skill archived → workspace/.skillopt/history/</span>
@@ -635,7 +635,7 @@
     <div class="metric-strip reveal" aria-label="Highlights">
       <div class="metric"><b>6</b><span>Benchmarks</span></div>
       <div class="metric"><b>+25.4</b><span>LiveMath vs SkillOpt (nano)</span></div>
-      <div class="metric"><b>0.776</b><span>SpreadsheetBench nano</span></div>
+      <div class="metric"><b>0.776</b><span>SpreadsheetBench nano · beats SkillOpt on 5.5</span></div>
       <div class="metric"><b>0</b><span>Fine-tuning steps</span></div>
     </div>
   </section>
@@ -668,8 +668,10 @@
         <span class="eyebrow">02 · Two commands</span>
         <h2 class="section-title">One line, two flavors.</h2>
         <p class="lede">
-          Type it in Copilot Chat (Agent mode) with the env folder open as
-          workspace root. The slash-command prompt lives at
+          Type it as a slash command in your coding agent, with the env folder
+          open as workspace root. Ships wired for VS Code Copilot Chat today;
+          Codex CLI, Claude Code, kimi-code, glm-code and deepseek-tui are on
+          the roadmap. The prompt lives at
           <code>&lt;env&gt;/.github/prompts/*.prompt.md</code> — read it if you
           want to tweak the loop policy.
         </p>
@@ -726,19 +728,19 @@
       <div class="steps">
         <div class="step reveal">
           <h4>ROLLOUT</h4>
-          <p>Run <code>run.sh</code> on a <code>batch</code>-item slice of <code>train</code>. Each item's trace + score is dumped to <code>.skillopt/samples/*.md</code>.</p>
+          <p>Run <code>run.sh</code> on a <code>batch</code>-item slice of <code>train</code>. Each item's trace + score is dumped to <code>.skillopt/samples/*.md</code>. <em>HarnessOpt</em> uses the same rollout but also records per-step tool traces from the harness code path.</p>
         </div>
         <div class="step reveal">
-          <h4>PATCH</h4>
-          <p>A coding agent reads the failed samples and proposes a bounded edit to <code>skill.md</code> (and, for <code>/harnessopt-loop</code>, the allow-listed <code>.py</code> files).</p>
+          <h4>EXPLORATION</h4>
+          <p>A coding agent reads the failed samples and proposes a bounded edit to <code>skill.md</code>. In <code>/harnessopt-loop</code> the exploration surface widens to an allow-listed slice of the agent code — <code>rollout · react_agent · codegen_agent · executor · adapter</code> — so the agent can co-evolve prompts <em>and</em> harness logic.</p>
         </div>
         <div class="step reveal">
           <h4>VAL GATE</h4>
-          <p>Re-run <code>run.sh --split val</code>. If the new score dips below the previous best minus a dead-band, roll back with <code>git reset</code>.</p>
+          <p>Re-run <code>run.sh --split val</code>. If the new score dips below the previous best minus a dead-band, roll back with <code>git reset</code>. Same gate for both loops — HarnessOpt just reverts more files at once.</p>
         </div>
         <div class="step reveal">
           <h4>ARCHIVE</h4>
-          <p>Every attempt lands in <code>workspace/.skillopt/history/</code> with its val score, so you can hand-pick or replay any prior candidate.</p>
+          <p>Every attempt lands in <code>workspace/.skillopt/history/</code> with its val score. HarnessOpt additionally snapshots the harness diff as a <code>git tag</code>, so you can hand-pick or replay any prior (skill, code) pair.</p>
         </div>
       </div>
     </div>
@@ -759,36 +761,39 @@
       </div>
       <div class="results-wrap">
         <div class="table-wrap reveal">
+          <p style="margin: 0 0 14px; font-family: var(--mono); font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em;">SkillOpt vs Ours</p>
           <table class="results">
             <thead>
               <tr>
-                <th>Setup</th>
-                <th>Score / Δ</th>
+                <th>Benchmark · Model</th>
+                <th>SkillOpt</th>
+                <th>Ours</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>SpreadsheetBench · GPT-5.4-nano · <b>HarnessOpt</b></td>
-                <td class="num">0.7758</td>
+                <td>SpreadsheetBench · nano</td>
+                <td class="num">0.7620 <span style="color:var(--quiet);font-weight:400;">(on 5.5)</span></td>
+                <td class="num">0.7758 <span style="color:#16a34a;font-weight:600;">HarnessOpt</span></td>
               </tr>
               <tr>
-                <td>SpreadsheetBench · GPT-5.5 · full SkillOpt</td>
-                <td class="num">0.7620</td>
-              </tr>
-              <tr>
-                <td>LiveMath · GPT-5.5 · SkillOptLite</td>
-                <td class="delta">+8.8</td>
-              </tr>
-              <tr>
-                <td>LiveMath · GPT-5.4-nano · SkillOptLite</td>
-                <td class="delta">+25.4</td>
-              </tr>
-              <tr>
-                <td>ALFWorld · GPT-5.4-nano · SkillOptLite</td>
+                <td>ALFWorld · nano</td>
+                <td class="num">71.8</td>
                 <td class="num">81.3 <span style="color:#16a34a;font-weight:600;">(+9.5)</span></td>
               </tr>
               <tr>
-                <td>Spreadsheet · avg · SkillOptLite</td>
+                <td>LiveMath · 5.5</td>
+                <td class="num">baseline</td>
+                <td class="delta">+8.8</td>
+              </tr>
+              <tr>
+                <td>LiveMath · nano</td>
+                <td class="num">baseline</td>
+                <td class="delta">+25.4</td>
+              </tr>
+              <tr>
+                <td>SpreadsheetBench · avg</td>
+                <td class="num">baseline</td>
                 <td class="delta">+12.6</td>
               </tr>
             </tbody>
@@ -824,13 +829,13 @@
         </div>
         <div class="card reveal">
           <span class="badge">planned</span>
-          <h4>Codex CLI plugin</h4>
-          <p>Port the slash-commands to OpenAI Codex CLI so the same loop works outside VS Code.</p>
+          <h4>Coding agents</h4>
+          <p>Port the slash-commands beyond VS Code Copilot Chat. Same loop, packaged as a slash-command extension for each host: <code>codex-cli</code>, <code>claude-code</code>, <code>kimi-code</code>, <code>glm-code</code>, <code>deepseek-tui</code>.</p>
         </div>
         <div class="card reveal">
           <span class="badge">planned</span>
-          <h4>Claude Code plugin</h4>
-          <p>Same, for Anthropic Claude Code — package the prompts as a slash-command extension.</p>
+          <h4>More envs for HarnessOpt</h4>
+          <p>Roll <code>/harnessopt-loop</code> out to the other five benchmarks — same allow-list pattern, different harness shapes.</p>
         </div>
       </div>
       <p class="caption-note" style="margin-top: 24px;">
@@ -882,7 +887,7 @@
           <a href="https://github.com/EvolvingLMMs-Lab/SkillOpt-Lite" target="_blank" rel="noopener">Code · GitHub</a>
           <a href="https://huggingface.co/datasets/yshenaw/SkillOpt_Lite_Benchmarks" target="_blank" rel="noopener">Dataset · HuggingFace</a>
           <a href="assets/skillopt_lite.pdf" target="_blank" rel="noopener">Paper (PDF)</a>
-          <a href="assets/icml2026_poster.pdf" target="_blank" rel="noopener">ICML 2026 Poster (PDF)</a>
+          <a href="assets/icml2026_poster.pdf" target="_blank" rel="noopener">Poster (PDF)</a>
           <a href="mailto:yshenaw@connect.ust.hk">yshenaw@connect.ust.hk</a>
         </div>
       </div>

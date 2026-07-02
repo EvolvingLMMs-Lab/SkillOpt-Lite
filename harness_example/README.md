@@ -1,7 +1,7 @@
 # harness_example/ — in-shell training loop
 
 Standalone counterpart to [`copilot_example/`](../copilot_example/). Where the
-copilot flow prepares samples for the VS Code plugin to iterate on,
+copilot flow prepares samples for a coding-agent slash command to iterate on,
 `harness_example/` runs the full skill-optimization loop entirely in a shell
 (rollouts → reflect → skill patch → eval) with every env's runtime editable
 in place.

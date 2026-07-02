@@ -62,11 +62,17 @@ The exporter recognizes ALFWorld-specific fields:
 
 ## Run the /skillopt-loop
 
-```bash
-code copilot_example/alfworld
-# in Copilot Chat (Agent mode):
-# /skillopt-loop rounds=3 batch=8
+Inside your coding agent (VS Code Copilot Chat / Codex CLI / Claude Code /
+kimi-code / glm-code / deepseek-tui — any host that reads local
+`.github/prompts/*.prompt.md`), just type:
+
 ```
+cd copilot_example/alfworld
+/skillopt-loop rounds=10 batch=8
+```
+
+That's the whole loop — the coding agent runs `run.sh`, inspects samples,
+patches `skill.md`, val-gates, and archives, all on its own.
 
 One-shot eval only (no chat):
 

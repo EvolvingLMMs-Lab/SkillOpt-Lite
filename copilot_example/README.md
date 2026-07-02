@@ -1,7 +1,10 @@
 # copilot_example/
 
-**Six benchmarks, each set up so a single `/skillopt-loop` slash command in
-GitHub Copilot Chat can iteratively improve `skill.md` for that env.**
+**Six benchmarks, each set up so a single `/skillopt-loop` slash command
+driven from your coding agent — VS Code Copilot Chat, Codex CLI, Claude
+Code, kimi-code, glm-code, deepseek-tui, or any other host that reads
+`.github/prompts/*.prompt.md` — can iteratively improve `skill.md` for
+that env.**
 
 ```
 copilot_example/
@@ -24,31 +27,33 @@ Each env ships two artifacts that matter to end users:
 1. `run.sh` — one-command evaluator that calls `scripts/eval_only.py`, writes
    `results.jsonl`, and then invokes `make_samples.py` to expand successes /
    failures into per-item markdown under `workspace/.skillopt/samples/`.
-2. `.github/prompts/skillopt-loop.prompt.md` — the VS Code chat slash command
+2. `.github/prompts/skillopt-loop.prompt.md` — the slash-command prompt
    that drives the closed-loop: run rollouts → inspect samples → patch
-   `skill.md` → gate on val → keep or roll back → repeat.
+   `skill.md` → gate on val → keep or roll back → repeat. It's plain
+   Markdown — any coding agent that picks up local prompt files works.
 
 ## Run the loop
 
-1. Open the env folder as the VS Code workspace root:
-   ```bash
-   code copilot_example/livemath
-   ```
-2. In the Copilot Chat panel, set the mode to **Agent**, then type:
-   ```
-   /skillopt-loop rounds=3 batch=20
-   ```
-3. The loop will, per round:
-   - call `run.sh --split train --eval_limit batch` (~20 items),
-   - inspect `.skillopt/samples/failed/*.md`,
-   - propose a `skill.md` patch,
-   - re-run `run.sh --split val` as the accept/reject gate,
-   - archive every attempt under `workspace/.skillopt/history/`.
-4. When it stops improving, the best `skill.md` is at
-   `workspace/skill.md`. Evaluate it on test:
-   ```bash
-   bash run.sh --split test --skill "$(pwd)/workspace/skill.md"
-   ```
+Inside your coding agent (VS Code Copilot Chat / Codex CLI / Claude Code /
+kimi-code / glm-code / deepseek-tui — any host that reads local
+`.github/prompts/*.prompt.md`), just type:
+
+```
+cd copilot_example/livemath
+/skillopt-loop rounds=10 batch=40
+```
+
+That's it. The coding agent itself drives the loop per round — calling
+`run.sh --split train --eval_limit batch`, inspecting
+`.skillopt/samples/failed/*.md`, patching `workspace/skill.md`, re-running
+`run.sh --split val` as the accept/reject gate, and archiving every
+attempt into `workspace/.skillopt/history/`.
+
+When it stops improving, the best `skill.md` is at `workspace/skill.md`.
+Evaluate it on test:
+```bash
+bash run.sh --split test --skill "$(pwd)/workspace/skill.md"
+```
 
 Argument hints: `/skillopt-loop rounds=<N> batch=<M>`. See each env's
 `.github/prompts/skillopt-loop.prompt.md` to change gate discipline, dead-band,

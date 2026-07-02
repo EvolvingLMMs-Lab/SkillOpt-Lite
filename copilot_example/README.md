@@ -40,31 +40,25 @@ kimi-code / glm-code / deepseek-tui — any host that reads local
 
 ```
 cd copilot_example/livemath
-/skillopt-loop rounds=10 batch=40
+/skillopt-loop rounds=2 batch=40 target=gpt-5.4-nano
 ```
 
-That's it. The coding agent itself drives the loop per round — calling
-`run.sh --split train --eval_limit batch`, inspecting
+That's it. The coding agent handles env setup for you (pip install, auth,
+`source ../env.sh`, data download) then drives the loop per round —
+calling `run.sh --split train --eval_limit batch`, inspecting
 `.skillopt/samples/failed/*.md`, patching `workspace/skill.md`, re-running
 `run.sh --split val` as the accept/reject gate, and archiving every
 attempt into `workspace/.skillopt/history/`.
 
 When it stops improving, the best `skill.md` is at `workspace/skill.md`.
-Evaluate it on test:
-```bash
-bash run.sh --split test --skill "$(pwd)/workspace/skill.md"
-```
+Argument hints: `/skillopt-loop rounds=<N> batch=<M> target=<model>`. See
+each env's `.github/prompts/skillopt-loop.prompt.md` to change gate
+discipline, dead-band, or rollback tag names.
 
-Argument hints: `/skillopt-loop rounds=<N> batch=<M>`. See each env's
-`.github/prompts/skillopt-loop.prompt.md` to change gate discipline, dead-band,
-or rollback tag names.
+## `run.sh` flag reference
 
-## Run just `run.sh` (no chat, one-shot eval)
-
-```bash
-# smoke: 5 items, exports 5 sample .md files
-bash copilot_example/livemath/run.sh --eval_limit 5 --limit 5
-```
+Your coding agent invokes `run.sh` for you, but here's the flag surface
+if you want to inspect or override what the loop is doing:
 
 Two flags people confuse:
 
@@ -112,6 +106,10 @@ instead. For SpreadsheetBench with the fully-optimized harness (edits code +
 skill), use `../harnessopt_ckpt/spreadsheetbench/best_skill_*.md`.
 
 ## Adding a new benchmark
+
+You don't need to do this by hand — flow #3 in the top-level README
+(`Bring your own repo + data`) walks the coding agent through it. If you
+want the manual recipe as reference:
 
 1. Copy an existing env folder: `cp -r copilot_example/searchqa copilot_example/<yourenv>`.
 2. Replace `dataloader.py`, `adapter.py`, `evaluator.py`, `rollout.py`, and

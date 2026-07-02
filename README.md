@@ -21,31 +21,41 @@
 
 ## TL;DR
 
-Do the one-time setup (`pip install -r requirements.txt`, fill in `.env`,
-`source ./env.sh`, `python data/download.py` — see [Setup](#setup-one-time)
-below). Then open the env folder **inside your coding agent** (VS Code
-Copilot Chat, Codex CLI, Claude Code, kimi-code, glm-code, deepseek-tui —
-anything that reads `.github/prompts/*.prompt.md`) and type one line at the
-chat prompt.
+Open this repo in your coding agent (VS Code Copilot Chat, Codex CLI,
+Claude Code, kimi-code, glm-code, deepseek-tui — anything that reads
+`.github/prompts/*.prompt.md`). **The coding agent handles environment
+setup for you** — `pip install`, auth, data download — so you just type
+one line of vibe at the chat prompt.
 
-**Skill-only optimization** (evolve `skill.md`):
+**1. Optimize a skill on a shipped benchmark** (edit `skill.md` only):
 
 ```
 cd copilot_example/livemath        # or spreadsheetbench / alfworld / ...
 /skillopt-loop rounds=2 batch=40 target=gpt-5.4-nano
 ```
 
-**Skill + harness optimization** (also edit the agent code):
+**2. Co-optimize skill + agent harness** (also edit the Python code):
 
 ```
 cd harness_example/spreadsheetbench
 /harnessopt-loop rounds=2 batch=40 target=gpt-5.4-nano skill=skills/initial.md
 ```
 
-That's it. The coding agent itself drives the loop — rollouts, sample
-inspection, `skill.md` (and, for `/harnessopt-loop`, allow-listed `.py`)
-patches, val-gated keep-or-revert, archive to
-`workspace/.skillopt/history/` — you don't touch anything else. When it
+**3. Bring your own repo + data** — no shim to write; point the coding
+agent at a reference env and let it scaffold. Sample vibe:
+
+> Read `copilot_example/livemath/` as a reference. Build a new env at
+> `copilot_example/myrepo/` that runs my eval:
+> `python -m myrepo.eval --items X --skill Y --out results.jsonl`.
+> Data is at `data/{train,val,test}.jsonl`; each result row has
+> `{id, input, expected, predicted, success}`. Smoke-test with
+> `--eval_limit 5` and confirm `samples/failed/*.md` is non-empty.
+
+Once it reports done, run flow #1 or #2 against the new folder.
+
+In all three cases the coding agent drives the loop — rollouts, sample
+inspection, `skill.md` patches, val-gated keep-or-revert, archive to
+`workspace/.skillopt/history/`. You don't touch anything else. When it
 stops improving, `workspace/skill.md` is the artifact you ship.
 
 **Two slash commands, one loop:**
@@ -118,147 +128,28 @@ Datasets are hosted on 🤗 [`yshenaw/SkillOpt_Lite_Benchmarks`](https://hugging
 
 ---
 
-## Setup (one-time)
+## Setup (fallback — your coding agent normally handles this)
 
-Assumed: Python 3.10+, any coding agent that supports slash-command
-prompt files (VS Code Copilot Chat, Codex CLI, Claude Code, ...), and
-either `az login` on Azure OpenAI, an OpenAI API key, or any
-OpenAI-compatible endpoint (vLLM / ollama / together / ...).
+Skip this section unless you're running headless or want to prep the
+environment before opening the coding agent. In the normal flow, the
+first time you issue any TL;DR command your coding agent will `pip
+install -r requirements.txt`, prompt you to fill in `.env` for whichever
+auth mode fits (`az login` / OpenAI key / OpenAI-compatible endpoint),
+`source ./env.sh`, and `python data/download.py` before starting the
+loop.
+
+Manual bootstrap:
 
 ```bash
-# 1) Deps
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-
-# 2) Auth (pick ONE mode — see docs/authentication.md)
-cp .env.example .env
-$EDITOR .env                       # AZURE_OPENAI_ENDPOINT / OPENAI_API_KEY / ...
+cp .env.example .env && $EDITOR .env       # AZURE_OPENAI_ENDPOINT / OPENAI_API_KEY / ...
 source ./env.sh
-
-# 3) Splits (~a few hundred MB, ALFWorld games + DocVQA images included)
-python data/download.py
+python data/download.py                     # ~a few hundred MB
 ```
 
-Smoke test any benchmark from the shell (no chat needed):
-
-```bash
-bash copilot_example/livemath/run.sh --eval_limit 5 --limit 5
-```
-
----
-
-## Run `/skillopt-loop` (skill-only optimization)
-
-Inside your coding agent (agent / tool-use mode), type:
-
-```
-cd copilot_example/spreadsheetbench
-/skillopt-loop rounds=10 batch=40
-```
-
-That's the whole "one line of vibe". The coding agent itself, per round,
-runs `run.sh` on a `batch`-item slice of `train`, inspects the resulting
-`.skillopt/samples/*.md` files, patches `workspace/skill.md`, re-runs
-`run.sh --split val` as the accept/reject gate, and archives every attempt
-into `workspace/.skillopt/history/`. When it finishes, the best skill
-lives at `workspace/skill.md`:
-
-```bash
-bash run.sh --split test --skill $(pwd)/workspace/skill.md
-```
-
-The slash-command prompt lives at
-`copilot_example/<env>/.github/prompts/skillopt-loop.prompt.md` — read it
-if you want to tweak the loop policy (round count, gate discipline,
-dead-band, roll-back tag names).
-
-Baked outputs from previous runs are already in
-[`skillopt_lite_ckpt/`](skillopt_lite_ckpt/) (per env × per target model),
-so you can skip the loop and go straight to eval:
-
-```bash
-python scripts/eval_only.py \
-    --config configs/spreadsheetbench/default.yaml \
-    --skill skillopt_lite_ckpt/spreadsheetbench/gpt5.5/skill.md \
-    --split test \
-    --split_dir data/spreadsheetbench_split \
-    --target_model gpt-5.5
-```
-
----
-
-## Run `/harnessopt-loop` (skill + harness code)
-
-Same idea, but the loop is also allowed to edit the Python files under
-`harness_example/<env>/`. Currently shipped: **SpreadsheetBench**.
-
-Inside your coding agent:
-
-```
-cd harness_example/spreadsheetbench
-/harnessopt-loop rounds=2 batch=12
-```
-
-Per round the coding agent `git tag`s a rollback point, runs full training
-coverage, clusters failures into a taxonomy, proposes a plan that touches
-an allow-listed subset of
-`{rollout, react_agent, codegen_agent, executor, adapter}.py` and/or
-`skill.md`, **pauses for user approval**, applies the patch, re-runs val,
-and either keeps it or `git reset`s back to the tag. When done, the
-optimized bundle lives in your working tree; a matching frozen snapshot
-is in
-[`harnessopt_ckpt/spreadsheetbench/`](harnessopt_ckpt/spreadsheetbench/)
-(both code and `best_skill_*.md`).
-
-Direct eval from a frozen snapshot:
-
-```bash
-python scripts/eval_only.py \
-    --config configs/spreadsheetbench/default.yaml \
-    --skill harnessopt_ckpt/spreadsheetbench/best_skill_5.5.md \
-    --split test \
-    --split_dir data/spreadsheetbench_split \
-    --target_model gpt-5.5
-```
-
-Or replay the whole run with the exact snapshotted harness:
-
-```bash
-cd harnessopt_ckpt/spreadsheetbench
-bash run.sh --model gpt-5.4-nano --skill skill_best_nano.md
-```
-
----
-
-## Auth modes at a glance
-
-| Mode              | When                                             | Vars                                                     |
-| ----------------- | ------------------------------------------------ | -------------------------------------------------------- |
-| `azure_cli` (default) | Azure OpenAI + `az login`                    | `AZURE_OPENAI_ENDPOINT`                                  |
-| `azure_key`       | Azure OpenAI + resource key                      | `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_KEY`          |
-| `openai`          | Official OpenAI or any OpenAI-compatible server  | `OPENAI_API_KEY`, optional `OPENAI_BASE_URL`             |
-
-Set `SKILLOPT_AUTH_MODE` in `.env`. Full walkthrough in
-[docs/authentication.md](docs/authentication.md).
-
----
-
-## Adding a new benchmark or model
-
-- **New benchmark for `/skillopt-loop`:** drop a folder into
-  `copilot_example/<env>/` with `dataloader.py`, `rollout.py`,
-  `skills/initial.md`, and a `run.sh` wired to
-  `scripts/eval_only.py --config configs/<env>/default.yaml`. Copy an
-  existing `.github/prompts/skillopt-loop.prompt.md` next to it and edit
-  the split sizes.
-- **New benchmark for `/harnessopt-loop`:** mirror the same layout under
-  `harness_example/<env>/`, register `<env>-local` in
-  `scripts/eval_only.py` and `scripts/train.py`, and add a
-  `configs/<env>-local/default.yaml` that inherits from the base config.
-- **New target model:** add the deployment name + backend routing in
-  `configs/_base_/default.yaml` and pass `--target_model <name>` to
-  `run.sh`. If the model needs a fresh backend (chat / exec) plug it in
-  under `skillopt/model/`.
+Full auth walkthrough (Azure CLI / Azure key / OpenAI / OpenAI-compatible)
+in [docs/authentication.md](docs/authentication.md).
 
 ---
 

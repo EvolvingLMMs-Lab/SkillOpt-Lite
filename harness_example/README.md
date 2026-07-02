@@ -46,9 +46,24 @@ so you can hack on them without touching the installed package.
 
 ## Running
 
+Inside your coding agent (VS Code Copilot Chat / Codex CLI / Claude Code
+/ kimi-code / glm-code / deepseek-tui — any host that reads local
+`.github/prompts/*.prompt.md`), just type:
+
+```
+cd harness_example/spreadsheetbench
+/harnessopt-loop rounds=2 batch=40 target=gpt-5.4-nano skill=skills/initial.md
+```
+
+The coding agent handles env setup for you (pip install, `source
+../env.sh`, data download) and then drives the full loop: rollout → smoke
+val → improve → full val gate → keep or `git reset` to the round tag,
+repeated for N rounds.
+
+If you'd rather run the harness once outside the loop:
+
 ```bash
 cd release_pkg/harness_example/spreadsheetbench
-# see env.sh in the release root for backend / API-key setup
 bash run.sh --model gpt-5.5 --skill skills/initial.md
 ```
 

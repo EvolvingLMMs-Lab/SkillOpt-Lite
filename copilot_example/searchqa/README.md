@@ -52,18 +52,13 @@ kimi-code / glm-code / deepseek-tui — any host that reads local
 
 ```
 cd copilot_example/searchqa
-/skillopt-loop rounds=10 batch=40
+/skillopt-loop rounds=2 batch=40 target=gpt-5.4-nano
 ```
 
-That's the whole loop — the coding agent runs `run.sh`, inspects samples,
-patches `skill.md`, val-gates, and archives, all on its own.
-
-One-shot eval only (no chat):
-
-```bash
-bash copilot_example/searchqa/run.sh --eval_limit 5 --limit 5
-# → copilot_example/searchqa/workspaces/<model>/{skill.md, .skillopt/samples/}
-```
+That's the whole loop — your coding agent handles env setup (pip
+install, `source ../env.sh`, data download) and then runs `run.sh`,
+inspects samples, patches `skill.md`, val-gates, and archives, all on
+its own. No manual bootstrap needed.
 
 ## Notes (vs the old reflect.py)
 

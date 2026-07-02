@@ -3,7 +3,7 @@
 *Train your agent's skills and harness with a single line of vibe — automatic, looped improvements.*
 
 [![arXiv](https://img.shields.io/badge/arXiv-coming%20soon-b31b1b)](#)
-[![ICML 2026 Poster](https://img.shields.io/badge/ICML%202026-Poster-8a2be2)](images/icml2026_poster.pdf)
+[![Poster](https://img.shields.io/badge/Poster-PDF-8a2be2)](images/icml2026_poster.pdf)
 [![Report](https://img.shields.io/badge/Report-PDF-informational)](images/skillopt_lite.pdf)
 [![HuggingFace Dataset](https://img.shields.io/badge/🤗%20Dataset-SkillOpt__Lite__Benchmarks-yellow)](https://huggingface.co/datasets/yshenaw/SkillOpt_Lite_Benchmarks)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)

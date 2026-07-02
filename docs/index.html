@@ -569,7 +569,7 @@
   <section class="hero" id="top">
     <div class="hero-inner">
       <div>
-        <span class="kicker">v0.1 · one line of vibe · zero fine-tuning</span>
+        <span class="kicker">v0.1 · one line of vibe · val-gated rollback</span>
         <h1 class="hero-title">
           <span class="accent">SkillOpt-Lite</span> and<br>
           <span class="accent">HarnessOpt</span>.
@@ -579,7 +579,9 @@
           agent from its own scored rollouts, with automatic <code>git tag</code>
           rollback whenever the val split says the change hurt. Better and
           faster agent self-evolution — no fine-tuning, no inference-time
-          overhead, the output is just a <code>skill.md</code> you ship.
+          overhead. <code>/skillopt-loop</code> outputs a shippable
+          <code>skill.md</code>; <code>/harnessopt-loop</code> also co-evolves
+          the agent harness (rollout, react-agent, code-gen, executor, adapter).
         </p>
         <div class="hero-actions">
           <a class="btn primary" href="https://github.com/EvolvingLMMs-Lab/SkillOpt-Lite" target="_blank" rel="noopener">
@@ -610,23 +612,25 @@
           <span class="path">~/copilot_example/spreadsheetbench</span>
         </div>
         <div class="terminal-body">
-<span class="comment"># in VS Code, open the env folder and Copilot Chat (Agent mode)</span>
+<span class="comment"># in your coding agent, open the env folder + slash-command palette</span>
 <div><span class="prompt">›</span> <span class="cmd">/skillopt-loop rounds=3 batch=20</span></div>
 <br>
 <span class="comment">round 1/3 · train 20 items ·······················</span>
 <div>&nbsp;&nbsp;<span class="kw">rollout</span>     ok  <span class="ok">0.612</span>  → samples/*.md</div>
-<div>&nbsp;&nbsp;<span class="kw">exploration</span> ok  edits: +12 / -4 lines</div>
+<div>&nbsp;&nbsp;<span class="kw">exploration</span> ok  edits: skill.md +12 / -4</div>
 <div>&nbsp;&nbsp;<span class="kw">val gate</span>    <span class="ok">0.601 → 0.674 ✓ keep</span></div>
 <br>
-<span class="comment">round 2/3 · train 20 items ·································</span>
-<div>&nbsp;&nbsp;<span class="kw">exploration</span> ok  edits: +5 / -1 lines</div>
-<div>&nbsp;&nbsp;<span class="kw">val gate</span>    <span class="warn">0.674 → 0.669 ✗ revert</span></div>
-<br>
-<span class="comment">round 3/3 · train 20 items ·································</span>
-<div>&nbsp;&nbsp;<span class="kw">exploration</span> ok  edits: +9 / -2 lines</div>
-<div>&nbsp;&nbsp;<span class="kw">val gate</span>    <span class="ok">0.674 → 0.712 ✓ keep</span></div>
+<span class="comment">round 2/3 · val gate reverted ····· <span class="warn">0.674 → 0.669 ✗</span></span>
+<div>&nbsp;&nbsp;<span class="kw">exploration</span> ok  edits: skill.md +5 / -1</div>
+<span class="comment">round 3/3 · val gate kept ········· <span class="ok">0.674 → 0.712 ✓</span></span>
 <br>
 <span class="comment"># best skill archived → workspace/.skillopt/history/</span>
+<br><br>
+<span class="comment"># wider surface: also let the coding agent edit the harness code</span>
+<div><span class="prompt">›</span> <span class="cmd">/harnessopt-loop rounds=3 batch=20</span></div>
+<div>&nbsp;&nbsp;<span class="kw">rollout</span>     ok  <span class="ok">0.641</span></div>
+<div>&nbsp;&nbsp;<span class="kw">exploration</span> ok  skill.md +8, react_agent.py +14, executor.py +3</div>
+<div>&nbsp;&nbsp;<span class="kw">val gate</span>    <span class="ok">0.641 → 0.7758 ✓ keep</span>  <span class="comment"># nano+HarnessOpt &gt; 5.5+SkillOpt+std harness (0.7620)</span></div>
 <div><span class="prompt">›</span> <span class="cmd">bash run.sh --split test --skill workspace/skill.md</span><span class="caret"></span></div>
         </div>
       </div>
@@ -635,8 +639,8 @@
     <div class="metric-strip reveal" aria-label="Highlights">
       <div class="metric"><b>6</b><span>Benchmarks</span></div>
       <div class="metric"><b>+25.4</b><span>LiveMath vs SkillOpt (nano)</span></div>
-      <div class="metric"><b>0.776</b><span>SpreadsheetBench nano · beats SkillOpt on 5.5</span></div>
-      <div class="metric"><b>0</b><span>Fine-tuning steps</span></div>
+      <div class="metric"><b>nano&nbsp;&gt;&nbsp;5.5</b><span>SpreadsheetBench nano+HarnessOpt beats 5.5+SkillOpt+standard harness</span></div>
+      <div class="metric"><b>2</b><span>Slash commands, one loop</span></div>
     </div>
   </section>
 
@@ -773,7 +777,7 @@
             <tbody>
               <tr>
                 <td>SpreadsheetBench · nano</td>
-                <td class="num">0.7620 <span style="color:var(--quiet);font-weight:400;">(on 5.5)</span></td>
+                <td class="num">0.7620 <span style="color:var(--quiet);font-weight:400;">(5.5 + SkillOpt + std harness)</span></td>
                 <td class="num">0.7758 <span style="color:#16a34a;font-weight:600;">HarnessOpt</span></td>
               </tr>
               <tr>

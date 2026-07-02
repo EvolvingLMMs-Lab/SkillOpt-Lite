@@ -34,7 +34,7 @@ Open `copilot_example/livemath` (or `spreadsheetbench` / `alfworld` /
 at the chat prompt:
 
 ```
-/skillopt-loop rounds=2 batch=40 target=gpt-5.4-nano
+/skillopt-loop rounds=10 batch=40 target=gpt-5.4-nano
 ```
 
 **2. Co-optimize skill + agent harness** (also edit the Python code).

@@ -19,20 +19,33 @@
 
 ## TL;DR
 
-Two VS Code chat slash-commands that iteratively improve your agent from
-its own scored rollouts, with auto-rollback whenever the val split says
-the change hurt:
+Do the one-time setup (`pip install -r requirements.txt`, fill in `.env`,
+`source ./env.sh`, `python data/download.py` — see [Setup](#setup-one-time)
+below). Then open the env folder **inside your coding agent** (VS Code
+Copilot Chat, Codex CLI, Claude Code, kimi-code, glm-code, deepseek-tui —
+anything that reads `.github/prompts/*.prompt.md`) and type one line at the
+chat prompt:
 
-| Command             | Where you type it                          | What it edits                                              |
-| ------------------- | ------------------------------------------ | ---------------------------------------------------------- |
-| `/skillopt-loop`    | inside `copilot_example/<env>/`            | just `skill.md`                                            |
-| `/harnessopt-loop`  | inside `harness_example/<env>/`            | `skill.md` **and** the agent code (`rollout.py`, `react_agent.py`, `codegen_agent.py`, `executor.py`, `adapter.py`) |
+```
+cd copilot_example/livemath        # or spreadsheetbench / alfworld / ...
+/skillopt-loop rounds=10 batch=40
+```
 
-Each round runs a small training batch, hands the failed traces to a
-coding agent, lets it patch the skill (and, in `/harnessopt-loop`, the
-agent code), re-runs val, and either keeps or reverts. When it stops
-improving, grab the best `skill.md` from `workspace/.skillopt/history/`
-and ship it — nothing to install at inference time, nothing to fine-tune.
+That's it. The coding agent itself drives the loop — rollouts, sample
+inspection, `skill.md` patches, val-gated keep-or-revert, archive to
+`workspace/.skillopt/history/` — you don't touch anything else. When it
+stops improving, `workspace/skill.md` is the artifact you ship.
+
+**Two slash commands, one loop:**
+
+| Command             | Cwd it expects                              | What the coding agent is allowed to edit                   |
+| ------------------- | ------------------------------------------- | ---------------------------------------------------------- |
+| `/skillopt-loop`    | inside `copilot_example/<env>/`             | just `skill.md`                                            |
+| `/harnessopt-loop`  | inside `harness_example/<env>/`             | `skill.md` **and** the agent code (`rollout.py`, `react_agent.py`, `codegen_agent.py`, `executor.py`, `adapter.py`) |
+
+Both are just prompt files at `<env>/.github/prompts/*.prompt.md` — read
+them to tune the loop policy (round count, gate discipline, dead-band,
+roll-back tag names).
 
 ## Pipeline
 
@@ -95,9 +108,10 @@ Datasets are hosted on 🤗 [`yshenaw/SkillOpt_Lite_Benchmarks`](https://hugging
 
 ## Setup (one-time)
 
-Assumed: Python 3.10+, VS Code with GitHub Copilot Chat, and either
-`az login` on Azure OpenAI, an OpenAI API key, or any OpenAI-compatible
-endpoint (vLLM / ollama / together / ...).
+Assumed: Python 3.10+, any coding agent that supports slash-command
+prompt files (VS Code Copilot Chat, Codex CLI, Claude Code, ...), and
+either `az login` on Azure OpenAI, an OpenAI API key, or any
+OpenAI-compatible endpoint (vLLM / ollama / together / ...).
 
 ```bash
 # 1) Deps
@@ -123,27 +137,25 @@ bash copilot_example/livemath/run.sh --eval_limit 5 --limit 5
 
 ## Run `/skillopt-loop` (skill-only optimization)
 
-1. Open the env folder as the VS Code workspace root:
-   ```bash
-   code copilot_example/spreadsheetbench
-   ```
-2. Open the Copilot Chat panel, set the mode to **Agent**, and type:
-   ```
-   /skillopt-loop rounds=3 batch=20
-   ```
-3. That's the whole "one line of vibe". The loop will, per round:
-   - run `run.sh` on a `batch`-item slice of `train`,
-   - inspect the resulting `.skillopt/samples/*.md` files,
-   - patch `workspace/skill.md`,
-   - re-run `run.sh --split val` as the accept/reject gate,
-   - archive every attempt into `workspace/.skillopt/history/`.
-4. When it finishes, the best skill lives at `workspace/skill.md`. Copy it
-   anywhere and evaluate:
-   ```bash
-   bash run.sh --split test --skill $(pwd)/workspace/skill.md
-   ```
+Inside your coding agent (agent / tool-use mode), type:
 
-The slash-command prompt itself lives at
+```
+cd copilot_example/spreadsheetbench
+/skillopt-loop rounds=10 batch=40
+```
+
+That's the whole "one line of vibe". The coding agent itself, per round,
+runs `run.sh` on a `batch`-item slice of `train`, inspects the resulting
+`.skillopt/samples/*.md` files, patches `workspace/skill.md`, re-runs
+`run.sh --split val` as the accept/reject gate, and archives every attempt
+into `workspace/.skillopt/history/`. When it finishes, the best skill
+lives at `workspace/skill.md`:
+
+```bash
+bash run.sh --split test --skill $(pwd)/workspace/skill.md
+```
+
+The slash-command prompt lives at
 `copilot_example/<env>/.github/prompts/skillopt-loop.prompt.md` — read it
 if you want to tweak the loop policy (round count, gate discipline,
 dead-band, roll-back tag names).
@@ -168,26 +180,23 @@ python scripts/eval_only.py \
 Same idea, but the loop is also allowed to edit the Python files under
 `harness_example/<env>/`. Currently shipped: **SpreadsheetBench**.
 
-1. Open the harness folder:
-   ```bash
-   code harness_example/spreadsheetbench
-   ```
-2. In Copilot Chat (Agent mode):
-   ```
-   /harnessopt-loop rounds=2 batch=12
-   ```
-3. Per round the loop will:
-   - `git tag` a rollback point,
-   - run full training coverage and cluster the failures into a taxonomy,
-   - propose a plan that touches an allow-listed subset of
-     `{rollout, react_agent, codegen_agent, executor, adapter}.py` and/or
-     `skill.md`,
-   - **pause for user approval** before applying,
-   - apply the patch, re-run val, keep or `git reset` back to the tag.
-4. When done, the optimized bundle lives in your working tree; a matching
-   frozen snapshot of what a full loop produces is in
-   [`harnessopt_ckpt/spreadsheetbench/`](harnessopt_ckpt/spreadsheetbench/)
-   (both code and `best_skill_*.md`).
+Inside your coding agent:
+
+```
+cd harness_example/spreadsheetbench
+/harnessopt-loop rounds=2 batch=12
+```
+
+Per round the coding agent `git tag`s a rollback point, runs full training
+coverage, clusters failures into a taxonomy, proposes a plan that touches
+an allow-listed subset of
+`{rollout, react_agent, codegen_agent, executor, adapter}.py` and/or
+`skill.md`, **pauses for user approval**, applies the patch, re-runs val,
+and either keeps it or `git reset`s back to the tag. When done, the
+optimized bundle lives in your working tree; a matching frozen snapshot
+is in
+[`harnessopt_ckpt/spreadsheetbench/`](harnessopt_ckpt/spreadsheetbench/)
+(both code and `best_skill_*.md`).
 
 Direct eval from a frozen snapshot:
 
@@ -283,9 +292,9 @@ if you want to help land any of the above.
 Built on top of [**SkillOpt**](https://github.com/microsoft/SkillOpt) — the
 text-space optimizer that trains reusable natural-language skills for frozen
 LLM agents through trajectory-driven edits, validation-gated updates, and
-deployable `best_skill.md` artifacts. `SkillOptLite` is the minimal
-Copilot-driven variant of that loop; `HarnessOpt` extends the same loop to
-also edit the agent code. Huge thanks to the SkillOpt authors and
+deployable `best_skill.md` artifacts. `SkillOpt-Lite` is the minimal
+coding-agent-driven variant of that loop; `HarnessOpt` extends the same
+loop to also edit the agent code. Huge thanks to the SkillOpt authors and
 contributors for the original design and open-source release.
 
 Released under the [MIT License](LICENSE).

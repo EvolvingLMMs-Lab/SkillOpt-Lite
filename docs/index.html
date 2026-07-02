@@ -630,7 +630,7 @@
 <div><span class="prompt">›</span> <span class="cmd">/harnessopt-loop rounds=3 batch=20</span></div>
 <div>&nbsp;&nbsp;<span class="kw">rollout</span>     ok  <span class="ok">0.641</span></div>
 <div>&nbsp;&nbsp;<span class="kw">exploration</span> ok  skill.md +8, react_agent.py +14, executor.py +3</div>
-<div>&nbsp;&nbsp;<span class="kw">val gate</span>    <span class="ok">0.641 → 0.7758 ✓ keep</span>  <span class="comment"># nano+HarnessOpt &gt; 5.5+SkillOpt+std harness (0.7620)</span></div>
+<div>&nbsp;&nbsp;<span class="kw">val gate</span>    <span class="ok">0.641 → 0.7758 ✓ keep</span>  <span class="comment"># GPT-5.4-nano+HarnessOpt &gt; GPT-5.5+SkillOpt+std harness (0.7620)</span></div>
 <div><span class="prompt">›</span> <span class="cmd">bash run.sh --split test --skill workspace/skill.md</span><span class="caret"></span></div>
         </div>
       </div>
@@ -638,7 +638,7 @@
 
     <div class="metric-strip reveal" aria-label="Highlights">
       <div class="metric"><b>6</b><span>Benchmarks</span></div>
-      <div class="metric"><b>+25.4</b><span>LiveMath vs SkillOpt (nano)</span></div>
+      <div class="metric"><b>+25.4</b><span>LiveMath vs SkillOpt (GPT-5.4-nano)</span></div>
       <div class="metric"><b>nano&nbsp;&gt;&nbsp;5.5</b><span>SpreadsheetBench GPT-5.4-nano+HarnessOpt beats GPT-5.5+SkillOpt+standard harness</span></div>
       <div class="metric"><b>2</b><span>Slash commands, one loop</span></div>
     </div>
@@ -775,42 +775,42 @@
             </thead>
             <tbody>
               <tr>
-                <td>SpreadsheetBench · nano · <b>HarnessOpt</b></td>
+                <td>SpreadsheetBench · GPT-5.4-nano · <b>HarnessOpt</b></td>
                 <td class="num">76.20 <span style="color:var(--quiet);font-weight:400;">(GPT-5.5)</span></td>
                 <td class="num">77.58 <span style="color:#16a34a;font-weight:600;">HarnessOpt</span></td>
               </tr>
               <tr>
-                <td>SpreadsheetBench · nano</td>
+                <td>SpreadsheetBench · GPT-5.4-nano</td>
                 <td class="num">51.6</td>
                 <td class="num">66.2 <span style="color:#16a34a;font-weight:600;">(+14.6)</span></td>
               </tr>
               <tr>
-                <td>SpreadsheetBench · 5.5</td>
+                <td>SpreadsheetBench · GPT-5.5</td>
                 <td class="num">76.2</td>
                 <td class="num">79.7 <span style="color:#16a34a;font-weight:600;">(+3.5)</span></td>
               </tr>
               <tr>
-                <td>LiveMath · nano</td>
+                <td>LiveMath · GPT-5.4-nano</td>
                 <td class="num">30.3</td>
                 <td class="num">55.7 <span style="color:#16a34a;font-weight:600;">(+25.4)</span></td>
               </tr>
               <tr>
-                <td>LiveMath · 5.5</td>
+                <td>LiveMath · GPT-5.5</td>
                 <td class="num">64.8</td>
                 <td class="num">73.6 <span style="color:#16a34a;font-weight:600;">(+8.8)</span></td>
               </tr>
               <tr>
-                <td>ALFWorld · nano</td>
+                <td>ALFWorld · GPT-5.4-nano</td>
                 <td class="num">71.8</td>
                 <td class="num">81.3 <span style="color:#16a34a;font-weight:600;">(+9.5)</span></td>
               </tr>
               <tr>
-                <td>OfficeQA · 5.5</td>
+                <td>OfficeQA · GPT-5.5</td>
                 <td class="num">72.2</td>
                 <td class="num">76.2 <span style="color:#16a34a;font-weight:600;">(+4.0)</span></td>
               </tr>
               <tr>
-                <td>DocVQA · 5.5</td>
+                <td>DocVQA · GPT-5.5</td>
                 <td class="num">91.2</td>
                 <td class="num">94.2 <span style="color:#16a34a;font-weight:600;">(+3.0)</span></td>
               </tr>

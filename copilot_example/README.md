@@ -39,8 +39,9 @@ CLI / Claude Code / kimi-code / glm-code / deepseek-tui — any host that
 reads local `.github/prompts/*.prompt.md`), then **type this at the
 coding-agent chat prompt** (not a shell terminal):
 
+In `copilot_example/livemath` (or any sibling env), type:
+
 ```
-cd copilot_example/livemath
 /skillopt-loop rounds=2 batch=40 target=gpt-5.4-nano
 ```
 

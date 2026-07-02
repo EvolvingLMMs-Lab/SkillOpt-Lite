@@ -28,17 +28,18 @@ commands below into that same coding-agent chat** — not a plain shell.
 The coding agent handles environment setup for you (`pip install`,
 auth, data download); you never leave the chat.
 
-**1. Optimize a skill on a shipped benchmark** (edit `skill.md` only):
+**1. Optimize a skill on a shipped benchmark** (edit `skill.md` only).
+In `copilot_example/livemath` (or `spreadsheetbench` / `alfworld` /
+`docvqa` / `officeqa` / `searchqa`), type:
 
 ```
-cd copilot_example/livemath        # or spreadsheetbench / alfworld / ...
 /skillopt-loop rounds=2 batch=40 target=gpt-5.4-nano
 ```
 
-**2. Co-optimize skill + agent harness** (also edit the Python code):
+**2. Co-optimize skill + agent harness** (also edit the Python code).
+In `harness_example/spreadsheetbench`, type:
 
 ```
-cd harness_example/spreadsheetbench
 /harnessopt-loop rounds=2 batch=40 target=gpt-5.4-nano skill=skill_best_nano.md
 ```
 

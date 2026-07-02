@@ -10,9 +10,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <p align="center">
-  <a href="images/wechat-group.jpg"><img src="images/wechat-group.jpg" alt="WeChat Group QR" width="220"/></a>
-  <br/>
-  <sub>Scan to join the WeChat community</sub>
+👉 <b><a href="https://evolvinglmms-lab.github.io/SkillOpt-Lite/">Project Page</a></b> 👈
+</p>
+
+<p align="center">
+👉 <b><a href="images/wechat-group.jpg">WeChat Group</a></b> 👈
 </p>
 
 ---

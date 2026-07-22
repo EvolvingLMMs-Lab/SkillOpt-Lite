@@ -78,10 +78,8 @@ samples (or use `/skillopt-loop` which handles the full setup).
      number** or **specific line in `solution.py`** where the failure
      pattern appears, so the reader can verify.
    - Quote the offending part of `skill.md` that should change.
-   - Watch the known failure clusters in
-     `.github/copilot-instructions.md` — especially **`pandas.to_excel`
-     formula loss**, **A1 vs (row, col) confusion**, and **hardcoded
-     ranges** (the `n_pass < n_cases` smell).
+   - Group findings into clusters yourself from what you observe in
+     `samples/failed/`; do not rely on any pre-labelled taxonomy.
    - If `hard=0` for a task but `soft>0`, the agent solved some cases
      but not all — fix is about generality (avoid hardcoding case-1's
      row count), not about correctness from scratch.
@@ -156,5 +154,3 @@ previous val run under `workspace/.skillopt/_eval_run/`.
 - Never edit `skills/initial.md` (it's the baseline).
 - The skill explicitly forbids libraries other than `openpyxl` / `pandas`.
   Don't introduce examples using anything else.
-- If you would rewrite >40% of the skill, **stop and ask** the user to
-  confirm — that's a `lr=large` change and usually regresses.

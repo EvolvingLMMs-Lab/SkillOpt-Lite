@@ -63,9 +63,8 @@ samples (or use `/skillopt-loop` which handles the full setup).
    - Cite each finding with sample ids (path) and the **turn number**
      where the failure pattern appears (so the reader can verify).
    - Quote the offending part of `skill.md` that should change.
-   - Watch the known failure clusters in
-     `.github/copilot-instructions.md` — especially **action-format
-     violations** and **missing transform steps**.
+   - Group findings into clusters yourself from what you observe in
+     `samples/failed/`; do not rely on any pre-labelled taxonomy.
    - If `hard=0` for an episode but `soft>0`, the agent made progress —
      the fix is usually about the last few turns, not the whole plan.
 
@@ -132,5 +131,3 @@ previous val run under `workspace/.skillopt/_eval_run/`.
   use `/skillopt-loop` for closed-loop).
 - Do **not** touch anything outside `workspace/`.
 - Never edit `skills/initial.md` (it's the baseline).
-- If you would rewrite >40% of the skill, **stop and ask** the user to
-  confirm — that's a `lr=large` change and usually regresses on alfworld.

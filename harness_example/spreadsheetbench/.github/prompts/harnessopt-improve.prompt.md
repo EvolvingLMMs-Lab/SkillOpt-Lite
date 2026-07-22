@@ -84,7 +84,6 @@ fix it in code.
    for counts.
 2. Read each failed sample's `## Notes` (`fail_reason`) header first to
    cluster. Common fail_reason values in spreadsheetbench:
-   - `agent-error: <Type>: <msg>` — LLM call or schema error
    - `no-solution-py-for-other-cases` — first case passed but extracted
      code didn't generalize to extra cases
    - `exec-error: <tail>` — `executor.run_generated_code` raised /

@@ -115,32 +115,6 @@ inspected.
    before mutating — the only undo path.
 6. **Don't touch `skills/initial.md`.** It's the baseline.
 
-## Known failure clusters on spreadsheetbench
-
-- **`pandas.to_excel` formula loss** — the agent reads with `pandas`,
-  modifies, then writes with `to_excel`, and the gold spreadsheet's
-  formulas / formatting / named ranges are gone. Fix: insist on
-  `openpyxl.load_workbook` for the *write* path even when `pandas` is
-  used for the transform.
-- **A1 vs (row, col) confusion** — the agent computes
-  `ws.cell(row=R, column=C).value = ...` with off-by-one indices because
-  openpyxl is 1-indexed but the agent reasons 0-indexed. Spot this when
-  outputs are shifted one row/column.
-- **Wrong sheet** — multi-sheet workbooks where the agent writes to
-  `wb.active` instead of `wb["<target sheet>"]`. The instruction usually
-  names the sheet explicitly.
-- **Hardcoded ranges** — agent writes `for row in range(2, 11)` after
-  seeing the first test case, which fails on a second case with more
-  rows. Symptom: `n_pass < n_cases`, `soft > 0` but `hard = 0`.
-- **Exec failures (`phase=exec`)** — `solution.py` raises (KeyError on
-  missing column, FileNotFoundError on output path, etc). Look at
-  `predictions/<id>/solution.py` directly.
-- **Timeout (`phase=timeout`)** — task didn't complete in 600s
-  (rare; usually means the agent fell into an infinite tool loop).
-- **Forbidden libraries** — agent imports something other than
-  `openpyxl` / `pandas`. Skill explicitly forbids; reinforce if it
-  recurs.
-
 ## Switching target models
 
 Each example supports the full TRAPI deployment matrix via the

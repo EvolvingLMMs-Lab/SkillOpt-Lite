@@ -166,7 +166,6 @@ r=<r>  val=<cand_acc>  Δ=<+/-Y>  action=<accept_new_best|accept|reject|flat>  b
 
 - `${input:rounds:3}` rounds completed.
 - `regression_streak ≥ 5` OR `noop_streak ≥ 5`.
-- `best_acc ≥ 0.5455` (stale HITL ceiling measured on gpt-5.4 medium; re-baseline once gpt-5.5 baseline is known).
 - User cancels.
 
 ## After all rounds

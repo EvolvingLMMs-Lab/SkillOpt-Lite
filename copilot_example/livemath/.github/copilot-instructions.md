@@ -50,9 +50,9 @@ fail_reason: MCQ=0: predicted 'D' but expected 'C'
 
 ## Editing principles for `workspace/skill.md`
 
-1. **Conservative wins.** The HITL ceiling (0.5455 on gpt-5.4 medium; stale
-   for gpt-5.5 until re-baselined) came from a handful of small targeted
-   edits — full rewrites consistently regressed. Default to ≤3 edits per round.
+1. **Conservative wins.** Historically, small targeted edits beat full
+   rewrites — full rewrites consistently regressed. Default to ≤3 edits
+   per round.
 2. **Format strictness matters.** livemath grades on `<answer>X</answer>`
    regex. Any wording change that nudges the model toward "Answer: X" or
    "The answer is X." tanks accuracy even when the letter is correct.
@@ -62,14 +62,6 @@ fail_reason: MCQ=0: predicted 'D' but expected 'C'
    workspace/.skillopt/history/<ts>__before.md` before mutating; this is the
    only undo path.
 5. **Don't touch `skills/initial.md`.** It's the baseline for comparison.
-
-## Known failure clusters on livemath
-
-- **Meta-option E / "none of the above"** — model picks E too eagerly when
-  unsure. Watch for samples tagged `Universal` with `predicted 'E'`.
-- **Symbolic vs numeric answers** — model sometimes outputs the simplified
-  expression instead of the requested letter.
-- **Answer-extraction** — correct reasoning but malformed `<answer>` tag.
 
 ## Running eval (terminal commands you may issue)
 

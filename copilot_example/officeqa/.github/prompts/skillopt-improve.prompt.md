@@ -41,10 +41,9 @@ samples (or use `/skillopt-loop` which handles the full setup).
      turns: a few `grep`/`read` calls then an `<answer>`). Read:
      1. The `## Input` (question + `_meta_` + `_sources_`) and
         `## Notes` (fail_reason) of each failed sample first.
-     2. The `## Expected` vs `## Agent output` diff — is the agent off
-        by a unit (`wrong-scale`), off by a row/period (`wrong-row`),
-        or skipping the source entirely (`no-answer-tag`,
-        `agent_failed`)?
+     2. The `## Expected` vs `## Agent output` diff — describe the
+        error in your own words, or note if the agent skipped the
+        source entirely (`no-answer-tag`, `agent_failed`).
      3. The **last 3–4 ReAct turns** of the trace — that's where the
         agent committed to the wrong cell or wrote the answer.
      4. For very short traces (≤ 2 turns), read the *whole* trace —
@@ -69,21 +68,17 @@ samples (or use `/skillopt-loop` which handles the full setup).
    - In your Diagnosis section below you must report **how many you
      read, which task types, which fail_reasons, and which turn
      ranges** (e.g. "read 6/15 failed across hard (4) + medium (2);
-     focused on last 3 turns each; 4/6 are wrong-scale on yen tables").
+     focused on last 3 turns each; 4/6 share the same failure pattern").
 
 3. **Diagnose** the most consistent weakness.
    - Cite each finding with sample ids (path) plus the **ReAct turn
      number** or **question text** where the failure pattern appears,
      so the reader can verify.
    - Quote the offending part of `skill.md` that should change.
-   - Watch the known failure clusters in
-     `.github/copilot-instructions.md` — especially **wrong-scale**
-     (the dominant failure: unit/currency conversion forgotten),
-     **wrong-row** (off-by-period match), and **skipped tool call**
-     (very short trace, hallucinated answer).
-   - If multiple failures share a single root cause (e.g. all
-     wrong-scale on currencies with non-USD bracketed `[In ...]`
-     headers), patch the root, not each symptom.
+   - Group findings into clusters yourself from what you observe in
+     `samples/failed/`; do not rely on any pre-labelled taxonomy.
+   - If multiple failures share a single root cause, patch the root,
+     not each symptom.
 
    **Patch discipline** (mirrors `skillopt/prompts/analyst_*.md`):
    - **Failure-first**: if `failed/` and `passed/` suggest conflicting
@@ -124,8 +119,8 @@ Use these exact section headers, in order:
 ### Diagnosis
 - First bullet: **sampling report** — how many failed/passed you read,
   which task_types covered, which fail_reasons dominated, and the
-  cluster you chose to patch (with support count, e.g. "wrong-scale on
-  hard tasks: 5/12 failed").
+  cluster you chose to patch (with support count, e.g. "the dominant
+  cluster on hard tasks: 5/12 failed").
 - 2–4 bullets on the most consistent weakness, each citing ≥1 sample
   id + ReAct turn number or the agent's exact wrong answer.
 
@@ -159,5 +154,3 @@ val run under `workspace/.skillopt/_eval_run/`.
 - The skill explicitly requires `grep`+`read` per numeric question and
   a strict `<answer>...</answer>` output format. Don't water either
   down — they are load-bearing.
-- If you would rewrite >40% of the skill, **stop and ask** the user
-  to confirm — that's a `lr=large` change and usually regresses.

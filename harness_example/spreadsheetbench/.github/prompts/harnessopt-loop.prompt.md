@@ -57,9 +57,7 @@ final:
     test(full=281)          — held-out generalization (LONG: 20-60 min, run once)
 ```
 
-**Target model**: `gpt-5.4-nano` (configured in `run.sh`; baseline is
-expected to be very low — spreadsheetbench is hard for nano. Target
-after harness-opt: any clearly positive Δ over baseline).
+**Target model**: `gpt-5.4-nano` (configured in `run.sh`).
 
 **Why a single loop over the harness Python code (no skill edits)?**
 SpreadsheetBench has two agent shapes baked into the harness — codegen

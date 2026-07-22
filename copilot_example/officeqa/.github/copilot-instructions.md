@@ -104,10 +104,10 @@ Each example supports the full TRAPI deployment matrix via the
 
 | Alias            | TRAPI deployment              | Lane          | When to use                                                |
 |------------------|-------------------------------|---------------|------------------------------------------------------------|
-| `gpt-5.4-nano`   | `gpt-5.4-nano_2026-03-17`     | `msra/shared` | Fastest/cheapest smoke runs. Hard baseline ≈ 0.05–0.10.    |
-| `gpt-5.4-mini`   | `gpt-5.4-mini_2026-03-17`     | `msra/shared` | Mid-tier. Hard baseline ≈ 0.10–0.15.                       |
-| `gpt-5.4`        | `gpt-5.4_2026-03-05`          | `msra/shared` | Full 5.4. Hard baseline ≈ 0.16.                            |
-| `gpt-5.5`        | `gpt-5.5_2026-04-24`          | `msra/shared` | **Default.** Hard baseline ≈ 0.48; best skill ≈ 0.74.      |
+| `gpt-5.4-nano`   | `gpt-5.4-nano_2026-03-17`     | `msra/shared` | Fastest/cheapest smoke runs.                               |
+| `gpt-5.4-mini`   | `gpt-5.4-mini_2026-03-17`     | `msra/shared` | Mid-tier.                                                  |
+| `gpt-5.4`        | `gpt-5.4_2026-03-05`          | `msra/shared` | Full 5.4.                                                  |
+| `gpt-5.5`        | `gpt-5.5_2026-04-24`          | `msra/shared` | **Default.**                                               |
 | `qwen3.5-9b`     | `Qwen/Qwen3.5-9B`             | `msra/shared` | OSS comparison. Tool-use weaker; expect a bigger gap.      |
 
 Examples:
@@ -132,7 +132,7 @@ full matrix — `gcr/shared` blocks `gpt-5.4`/`gpt-5.5`, and Qwen only ships
 on `msra/shared`.
 
 **Skills are model-specific.** A `skill.md` tuned for `gpt-5.5` (the
-seeded `workspace/skill.md` here, hard=0.74) does **not** transfer to
+seeded `workspace/skill.md` here) does **not** transfer to
 `gpt-5.4` — cross-model evaluation showed it actually scored slightly
 *worse* than `gpt-5.4`'s own baseline. Re-run `/skillopt-loop` per target
 model if you care about that model's headline number.
@@ -169,32 +169,6 @@ model if you care about that model's headline number.
 7. **Don't touch `skills/initial.md`.** It's the baseline used for
    round-0 comparison.
 
-## Known failure clusters on officeqa
-
-- **Wrong scale (`wrong-scale`)** — agent reads `123` from a table whose
-  header says `[In billions of yen]` and answers `123` (millions) or
-  `123,000,000` (raw). Fix: always re-read the bracketed scale note
-  *and* convert before computing.
-- **Wrong row (`wrong-row`)** — agent matches a similar but
-  off-by-one-period row ("end of FY2003" vs "as of Mar 2003"). Fix:
-  insist on exact date / period match and re-read neighbouring rows.
-- **Wrong column** — multi-column tables with a `(1)(2)(3)(4)` index
-  header row plus a label row; agent picks the wrong column. Fix:
-  worked example showing the two-header pattern and how to map
-  question wording → column index.
-- **Skipped tool call (`no-answer-tag`, agent_ok=false)** — agent
-  answers directly from the oracle-parsed-pages excerpt without
-  running `grep`/`read`. Symptom: very short trace (≤ 2 turns) and a
-  hallucinated number. Fix: reinforce the "minimum tool-call
-  discipline" block at the top of `skill.md`.
-- **Currency-conversion direction** — `<currency> per USD` vs `USD per
-  <currency>` confusion. Fix: worked example for each direction.
-- **Format violations (`no-answer-tag`)** — agent emits prose around
-  the answer, or includes a `%` / `$` / `million` suffix that the
-  scorer rejects. Fix: keep the "Final Answer Format (STRICT)" block
-  unambiguous and at the *end* of the skill so it's the last thing the
-  agent reads before answering.
-
 ## Running eval (terminal commands you may issue)
 
 Quick smoke (8 tasks, ~2–4 min on gpt-5.5):
@@ -222,21 +196,3 @@ Each run prints `Results: hard=<X> soft=<Y>` — `hard` is what the gate
 compares on. For officeqa `soft == hard` in normal cases; a gap means
 the scorer normalised differently for those samples (rare, ignore unless
 chasing the last point or two).
-
-## Expected scores on the seeded skill
-
-The `workspace/skill.md` shipped with this example is the best skill
-produced by a 4-epoch SkillOpt run on `gpt-5.5` (msra/shared,
-2026-06-11). Reproducing the headline:
-
-| target model     | initial.md hard | workspace/skill.md hard |
-|------------------|-----------------|--------------------------|
-| `gpt-5.5`        | 0.4767          | **0.7384** (+26.2 pp)    |
-| `gpt-5.4`        | 0.1628          | 0.1570 (no transfer)     |
-| `gpt-5.4-mini`   | ~0.00 (smoke)   | ~0.21 (smoke, 24 items)  |
-| `gpt-5.4-nano`   | low             | re-run /skillopt-loop    |
-| `qwen3.5-9b`     | TBD             | re-run /skillopt-loop    |
-
-The takeaway: **skills are model-specific**. Use the seeded skill as a
-strong baseline only for `gpt-5.5`; for any other target run
-`/skillopt-loop` against that target from `skills/initial.md`.

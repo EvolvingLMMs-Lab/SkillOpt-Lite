@@ -92,26 +92,6 @@ exporter. Use the `<summary>` line + `## Notes` to triage before expanding.
    path.
 6. **Don't touch `skills/initial.md`.** It's the baseline for comparison.
 
-## Known failure clusters on alfworld
-
-- **Wrong object instance** — the agent picks `apple 1` when the gold
-  expects `apple 2`, or stops after the first match without checking
-  freshness/cleanness. Watch for `Pick Two & Place` failures where the
-  agent picks the same instance twice.
-- **Missing transform step** — for Clean/Heat/Cool & Place, the agent goes
-  straight from take → place and skips sinkbasin / microwave / fridge.
-- **Unparseable actions** — the LLM emits prose ("I'll examine the apple")
-  instead of a valid command (`examine apple 1`). Each unparseable action
-  burns a turn without advancing the state.
-- **Inventory confusion** — after taking an object, the agent forgets it's
-  holding it and tries to `take` again, or tries to `put` before going to
-  the receptacle.
-- **Receptacle disambiguation** — many rooms have multiple `cabinet`s /
-  `countertop`s. The agent picks the first one mentioned instead of
-  checking which contains the target.
-- **Hitting max_steps (50)** — long episodes that almost succeed but spend
-  too many turns exploring. Usually pairs with one of the above clusters.
-
 ## Running eval (terminal commands you may issue)
 
 Quick smoke (3 episodes, ~2–4 min — depends on episode length):

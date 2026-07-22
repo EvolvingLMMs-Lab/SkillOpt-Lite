@@ -44,8 +44,8 @@ Official `batch_size=40` (from `configs/officeqa/default.yaml`). The
 improve step won't read all 40 traces — its reading budget table caps
 at ~8–12 across clusters with a 30KB ceiling — but rolling out 40
 tasks per round gives proper cluster signal across the three
-task_types (`easy`, `medium`, `hard`) and the fail-reason buckets
-(wrong-scale, wrong-row, no-answer-tag, agent-error).
+task_types (`easy`, `medium`, `hard`) and whatever fail-reason buckets
+the harness emits.
 
 **⚠️ Cost note**: officeqa tasks involve up to 24 ReAct turns with
 ~16k completion tokens per task. On `gpt-5.5` with **16 workers**

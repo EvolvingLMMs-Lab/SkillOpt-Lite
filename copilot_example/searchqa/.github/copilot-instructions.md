@@ -81,22 +81,6 @@ fail_reason: EM=0: predicted 'Barack H. Obama' but expected 'Barack Obama'
    workspace/.skillopt/history/<ts>__before.md` before mutating — only undo path.
 6. **Don't touch `skills/initial.md`.** It's the baseline for comparison.
 
-## Known failure clusters on searchqa
-
-- **Span over-extension** — model returns "Barack H. Obama" or "President
-  Barack Obama" when gold is "Barack Obama" (EM=0 but F1≈0.67). The skill
-  should instruct to extract the **minimal** noun phrase.
-- **Multi-span answers** — questions with comma-separated gold answers
-  (e.g. "List three…") that the model collapses or reorders.
-- **Long-context distraction** — answer is in the first `[DOC]` but the model
-  pulls a wrong number/name from a later doc. The skill can hint to prefer
-  earlier docs when conflicting.
-- **`<answer>` tag missing** — model outputs reasoning then "Final: X." with
-  no tag. Falls back to last line, but if there's a trailing period or other
-  punctuation in a way that breaks the answer, EM=0.
-- **Extra articles/punctuation** — usually normalized away; if you see EM=0
-  with what looks like a clean answer, double-check `evaluator.py` rules.
-
 ## Running eval (terminal commands you may issue)
 
 Quick smoke (5 items, ~30s):

@@ -58,8 +58,8 @@ samples (or use `/skillopt-loop` which handles the full setup).
 3. **Diagnose** the most consistent weakness.
    - Cite each finding with sample ids (path).
    - Quote the offending part of `skill.md` that should change.
-   - Watch the known failure clusters (`.github/copilot-instructions.md`),
-     especially the `<answer>X</answer>` format trap.
+   - Group findings into clusters yourself from what you observe in
+     `samples/failed/`; do not rely on any pre-labelled taxonomy.
 
    **Patch discipline** (mirrors `skillopt/prompts/analyst_*.md`):
    - **Failure-first**: if `failed/` and `passed/` suggest conflicting
@@ -116,5 +116,3 @@ under `workspace/.skillopt/_eval_run/`.
   use `/skillopt-loop` for closed-loop).
 - Do **not** touch anything outside `workspace/`.
 - Never edit `skills/initial.md` (it's the baseline).
-- If you would rewrite >40% of the skill, **stop and ask** the user to
-  confirm — that's a `lr=large` change and usually regresses on livemath.
